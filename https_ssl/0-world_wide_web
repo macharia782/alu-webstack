@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Displays DNS record information for subdomains of a given domain
+
+check_subdomain() {
+    local sub="$1"
+    local dom="$2"
+    dig "${sub}.${dom}" | awk -v s="$sub" '/^[^;]/ && $4 != "" {print "The subdomain " s " is a " $4 " record and points to " $5; exit}'
+}
+
+if [ "$#" -eq 1 ]; then
+    for sub in www lb-01 web-01 web-02; do
+        check_subdomain "$sub" "$1"
+    done
+elif [ "$#" -ge 2 ]; then
+    check_subdomain "$2" "$1"
+fi
